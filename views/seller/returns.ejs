@@ -1,0 +1,53 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6">
+    <h1 class="text-2xl font-bold heading mb-6">Returns & Exchanges</h1>
+
+    <div class="space-y-4">
+      <% rows.forEach(({order, item}) => { %>
+        <div class="card p-4">
+          <div class="flex items-center gap-4 mb-3">
+            <img src="<%= item.image %>" class="w-14 h-14 rounded-md object-cover bg-navy2">
+            <div class="flex-1">
+              <p class="text-sm font-medium"><%= item.name %></p>
+              <p class="text-xs text-textSecondary">Order #<%= order.orderNumber %> · <%= item.returnInfo.type %></p>
+            </div>
+            <span class="badge-discount"><%= item.returnInfo.status %></span>
+          </div>
+          <p class="text-sm text-textSecondary mb-1">Reason: <%= item.returnInfo.reason %></p>
+          <% if (item.returnInfo.details) { %><p class="text-sm text-textSecondary mb-3">Details: <%= item.returnInfo.details %></p><% } %>
+
+          <% if (item.returnInfo.status === 'REQUESTED') { %>
+            <div class="flex gap-3">
+              <form action="/seller/orders/<%= order._id %>/items/<%= item._id %>/return-status" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="status" value="APPROVED">
+                <button class="gradient-btn px-4 py-1.5 rounded-md text-xs font-medium">Approve</button>
+              </form>
+              <form action="/seller/orders/<%= order._id %>/items/<%= item._id %>/return-status" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="status" value="REJECTED">
+                <button class="border border-error text-error px-4 py-1.5 rounded-md text-xs font-medium">Reject</button>
+              </form>
+            </div>
+          <% } else if (item.returnInfo.status === 'APPROVED') { %>
+            <form action="/seller/orders/<%= order._id %>/items/<%= item._id %>/return-status" method="POST">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input type="hidden" name="status" value="PICKED_UP">
+              <button class="gradient-btn px-4 py-1.5 rounded-md text-xs font-medium">Mark as Picked Up</button>
+            </form>
+          <% } else if (item.returnInfo.status === 'PICKED_UP') { %>
+            <form action="/seller/orders/<%= order._id %>/items/<%= item._id %>/return-status" method="POST">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input type="hidden" name="status" value="REFUNDED">
+              <button class="gradient-btn px-4 py-1.5 rounded-md text-xs font-medium">Process Refund</button>
+            </form>
+          <% } %>
+        </div>
+      <% }) %>
+      <% if (rows.length === 0) { %><div class="card p-10 text-center text-textSecondary">No return requests.</div><% } %>
+    </div>
+  </main>
+</div>
+<%- include('../partials/footer') %>

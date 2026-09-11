@@ -1,0 +1,51 @@
+<section class="max-w-7xl mx-auto px-4 pb-16" id="reviews">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-bold heading">Ratings & Reviews</h2>
+    <form method="GET" class="flex gap-2">
+      <select name="reviewSort" onchange="this.form.submit()" class="bg-navy2 border border-border2 rounded-md px-3 py-1.5 text-sm">
+        <option value="newest">Newest</option>
+        <option value="helpful">Most Helpful</option>
+        <option value="highest">Highest Rated</option>
+        <option value="lowest">Lowest Rated</option>
+      </select>
+    </form>
+  </div>
+
+  <% if (userCanReview) { %>
+    <% if (reviewError) { %><p class="text-error text-sm mb-3"><%= reviewError %></p><% } %>
+    <form action="/reviews/submit" method="POST" class="card p-4 mb-6 space-y-3">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="productId" value="<%= product._id %>">
+      <div class="flex gap-1">
+        <% for (let i = 1; i <= 5; i++) { %>
+          <label class="cursor-pointer">
+            <input type="radio" name="rating" value="<%= i %>" class="hidden peer" <%= i === 5 ? 'checked' : '' %>>
+            <span class="text-2xl text-textSecondary peer-checked:text-warning">★</span>
+          </label>
+        <% } %>
+      </div>
+      <input name="title" placeholder="Review title (optional)" class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <textarea name="text" placeholder="Share your experience with this product..." required rows="3" class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm"></textarea>
+      <button class="gradient-btn px-5 py-2 rounded-md text-sm font-medium">Submit Review</button>
+    </form>
+  <% } %>
+
+  <div class="space-y-4">
+    <% reviews.forEach(r => { %>
+      <div class="card p-4">
+        <div class="flex justify-between items-start mb-1">
+          <span class="bg-success text-navy px-2 py-0.5 rounded font-semibold text-xs">★ <%= r.rating %></span>
+          <% if (r.isVerifiedPurchase) { %><span class="text-success text-xs">✓ Verified Purchase</span><% } %>
+        </div>
+        <% if (r.title) { %><p class="font-medium text-sm mt-1"><%= r.title %></p><% } %>
+        <p class="text-sm text-textSecondary mt-1"><%= r.text %></p>
+        <p class="text-xs text-textSecondary mt-2">— <%= r.user?.name || 'User' %> · <%= new Date(r.createdAt).toDateString() %></p>
+        <form action="/reviews/<%= r._id %>/helpful" method="POST" class="mt-2">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="text-xs text-textSecondary">👍 Helpful (<%= r.helpfulCount %>)</button>
+        </form>
+      </div>
+    <% }) %>
+    <% if (reviews.length === 0) { %><p class="text-textSecondary text-sm">No reviews yet. Be the first to review this product!</p><% } %>
+  </div>
+</section>

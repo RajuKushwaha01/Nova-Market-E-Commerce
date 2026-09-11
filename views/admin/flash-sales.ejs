@@ -1,0 +1,54 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6 max-w-4xl">
+    <h1 class="text-2xl font-bold heading mb-4">Flash Sales</h1>
+
+    <form action="/admin/flash-sales/create" method="POST" class="card p-5 space-y-3 mb-6">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input name="title" placeholder="Sale Title" required class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <div class="grid md:grid-cols-2 gap-3">
+        <input type="datetime-local" name="startTime" required class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+        <input type="datetime-local" name="endTime" required class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      </div>
+      <div id="flashRows" class="space-y-2">
+        <div class="grid md:grid-cols-3 gap-2">
+          <select name="productIds" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+            <% products.forEach(p => { %><option value="<%= p._id %>"><%= p.name %> (₹<%= p.price %>)</option><% }) %>
+          </select>
+          <input type="number" name="salePrices" placeholder="Sale Price" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+          <input type="number" name="stockLimits" placeholder="Stock Limit" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+        </div>
+      </div>
+      <button type="button" onclick="addFlashRow()" class="text-cyan text-xs">+ Add another product</button>
+      <button class="gradient-btn w-full py-2 rounded-md text-sm font-medium">Create Flash Sale</button>
+    </form>
+
+    <div class="space-y-4">
+      <% sales.forEach(s => { %>
+        <div class="card p-4">
+          <div class="flex justify-between mb-2">
+            <p class="font-medium"><%= s.title %></p>
+            <span class="badge-discount"><%= s.isActive ? 'Active' : 'Inactive' %></span>
+          </div>
+          <p class="text-xs text-textSecondary mb-2"><%= new Date(s.startTime).toLocaleString() %> → <%= new Date(s.endTime).toLocaleString() %></p>
+          <% s.products.forEach(p => { %>
+            <p class="text-sm">• <%= p.product?.name %> — ₹<%= p.salePrice %> (Limit: <%= p.stockLimit %>, Sold: <%= p.sold %>)</p>
+          <% }) %>
+          <form action="/admin/flash-sales/<%= s._id %>/toggle" method="POST" class="mt-2">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="text-cyan text-xs"><%= s.isActive ? 'Deactivate' : 'Activate' %></button>
+          </form>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+</div>
+<script>
+function addFlashRow() {
+  const row = document.querySelector('#flashRows > div').cloneNode(true);
+  row.querySelectorAll('input').forEach(i => i.value = '');
+  document.getElementById('flashRows').appendChild(row);
+}
+</script>
+<%- include('../partials/footer') %>

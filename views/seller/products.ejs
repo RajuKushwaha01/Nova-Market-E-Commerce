@@ -1,0 +1,63 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold heading">My Products</h1>
+      <a href="/seller/products/add" class="gradient-btn px-5 py-2 rounded-md font-semibold text-sm">+ Add Product</a>
+    </div>
+
+    <% if (typeof successMessage !== 'undefined' && successMessage) { %>
+      <div class="card p-3 mb-4 border border-success">
+        <p class="text-success text-sm"><%= successMessage %></p>
+      </div>
+    <% } %>
+
+    <div class="card p-3 mb-6 bg-navy2 border border-border2">
+      <p class="text-textSecondary text-xs">📋 New and edited products require admin approval before they appear on the storefront. Check the <strong>Status</strong> column below — "pending" means it's awaiting review.</p>
+    </div>
+
+    <div class="card overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-navy2">
+          <tr class="text-left text-textSecondary">
+            <th class="p-3">Product</th><th class="p-3">SKU</th><th class="p-3">Price</th>
+            <th class="p-3">Stock</th><th class="p-3">Status</th><th class="p-3">Sales</th><th class="p-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% products.forEach(p => { %>
+            <tr class="border-t border-border2">
+              <td class="p-3 flex items-center gap-2">
+                <img src="<%= p.images[0] || '' %>" class="w-10 h-10 rounded-md object-cover bg-navy2">
+                <span class="truncate max-w-[160px]"><%= p.name %></span>
+              </td>
+              <td class="p-3 text-textSecondary"><%= p.sku || '—' %></td>
+              <td class="p-3">₹<%= p.price %></td>
+              <td class="p-3 <%= p.stock === 0 ? 'text-error' : p.stock <= 5 ? 'text-warning' : '' %>"><%= p.stock %></td>
+              <td class="p-3"><span class="badge-discount"><%= p.status %></span></td>
+              <td class="p-3"><%= p.soldCount %></td>
+              <td class="p-3 space-x-2 whitespace-nowrap">
+                <a href="/seller/products/<%= p._id %>/edit" class="text-cyan text-xs">Edit</a>
+                <form action="/seller/products/<%= p._id %>/duplicate" method="POST" class="inline">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="text-textSecondary text-xs">Duplicate</button>
+                </form>
+                <form action="/seller/products/<%= p._id %>/disable" method="POST" class="inline">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="text-warning text-xs"><%= p.status === 'disabled' ? 'Enable' : 'Disable' %></button>
+                </form>
+                <form action="/seller/products/<%= p._id %>/delete" method="POST" class="inline" onsubmit="return confirm('Delete this product?')">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="text-error text-xs">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% if (products.length === 0) { %><p class="p-6 text-textSecondary text-center">No products yet.</p><% } %>
+    </div>
+  </main>
+</div>
+<%- include('../partials/footer') %>

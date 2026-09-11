@@ -1,0 +1,32 @@
+<div class="card p-3 relative group">
+  <button class="wishlist-btn absolute top-3 right-3 z-10 text-textSecondary hover:text-error" data-id="<%= p._id %>">
+    ♡
+  </button>
+
+  <a href="/product/<%= p._id %>" class="block">
+    <div class="bg-navy2 h-40 rounded-md mb-3 overflow-hidden flex items-center justify-center text-textSecondary text-xs">
+      <% if (p.images && p.images[0]) { %>
+        <img src="<%= p.images[0] %>" class="h-full w-full object-cover" alt="<%= p.name %>">
+      <% } else { %> No Image <% } %>
+    </div>
+
+    <% if (p.discountPercent > 0) { %>
+      <span class="badge-discount absolute top-3 left-3"><%= p.discountPercent %>% OFF</span>
+    <% } %>
+
+    <p class="text-xs text-textSecondary"><%= p.brand %></p>
+    <p class="text-sm font-medium truncate mb-1"><%= p.name %></p>
+
+    <% if (p.rating > 0) { %>
+      <p class="text-xs mb-1"><span class="bg-success text-navy px-1.5 py-0.5 rounded font-semibold">★ <%= p.rating.toFixed(1) %></span> <span class="text-textSecondary">(<%= p.reviewCount %>)</span></p>
+    <% } %>
+
+    <div class="flex items-center gap-2">
+      <span class="font-bold">₹<%= p.price.toLocaleString('en-IN') %></span>
+      <% if (p.mrp > p.price) { %>
+        <span class="price-original">₹<%= p.mrp.toLocaleString('en-IN') %></span>
+      <% } %>
+    </div>
+    <p class="text-xs text-success mt-1">Free Delivery</p>
+  </a>
+</div>

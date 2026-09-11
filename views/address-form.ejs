@@ -1,0 +1,30 @@
+<%- include('partials/header') %>
+<section class="max-w-2xl mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold heading mb-6"><%= address ? 'Edit' : 'Add' %> Address</h1>
+  <form action="<%= address ? '/addresses/' + address._id + '/edit' : '/addresses/new' %>" method="POST" class="card p-6 grid md:grid-cols-2 gap-4">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input name="fullName" value="<%= address ? address.fullName : '' %>" placeholder="Full Name" required class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+    <input name="mobile" value="<%= address ? address.mobile : '' %>" placeholder="Mobile" required class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+    <input name="houseNumber" value="<%= address ? address.houseNumber : '' %>" placeholder="House No." required class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+    <input name="street" value="<%= address ? address.street : '' %>" placeholder="Street" required class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+    <input name="area" value="<%= address ? address.area : '' %>" placeholder="Area" class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+    <input name="city" value="<%= address ? address.city : '' %>" placeholder="City" required class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+    <input name="state" value="<%= address ? address.state : '' %>" placeholder="State" required class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+    <input name="pincode" value="<%= address ? address.pincode : '' %>" placeholder="Pincode" required class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+    <input name="landmark" value="<%= address ? address.landmark : '' %>" placeholder="Landmark" class="bg-navy2 border border-border2 rounded-md px-3 py-2 md:col-span-2">
+
+    <select name="addressType" class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+      <option value="Home" <%= address && address.addressType === 'Home' ? 'selected' : '' %>>Home</option>
+      <option value="Work" <%= address && address.addressType === 'Work' ? 'selected' : '' %>>Work</option>
+      <option value="Other" <%= address && address.addressType === 'Other' ? 'selected' : '' %>>Other</option>
+    </select>
+
+    <label class="flex items-center gap-2 text-sm text-textSecondary">
+      <input type="checkbox" name="isDefault" <%= address && address.isDefault ? 'checked' : '' %>>
+      Set as default address
+    </label>
+
+    <button class="gradient-btn py-2 rounded-md font-semibold md:col-span-2">Save Address</button>
+  </form>
+</section>
+<%- include('partials/footer') %>

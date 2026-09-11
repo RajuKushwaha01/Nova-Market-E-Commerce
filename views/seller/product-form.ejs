@@ -1,0 +1,83 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6 max-w-3xl">
+    <h1 class="text-2xl font-bold heading mb-6"><%= product ? 'Edit' : 'Add' %> Product</h1>
+    
+   <% if (typeof productFormError !== 'undefined' && productFormError) { %>
+  <p class="text-error text-sm mb-4"><%= productFormError %></p>
+   <% } %>
+
+    <form action="<%= product ? '/seller/products/' + product._id + '/edit' : '/seller/products/add' %>"
+      method="POST" enctype="multipart/form-data" class="card p-6 space-y-4">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <input name="name" value="<%= product ? product.name : '' %>" placeholder="Product Name" required class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+        <input name="brand" value="<%= product ? product.brand : '' %>" placeholder="Brand" class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+      </div>
+
+      <select name="category" required class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2">
+        <option value="">Select Category</option>
+        <% categories.forEach(c => { %>
+          <option value="<%= c._id %>" <%= product && String(product.category) === String(c._id) ? 'selected' : '' %>>
+            <%= '—'.repeat(c.level) %> <%= c.name %>
+          </option>
+        <% }) %>
+      </select>
+
+      <textarea name="description" placeholder="Description" required rows="3" class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2"><%= product ? product.description : '' %></textarea>
+      <textarea name="highlights" placeholder="Highlights (one per line)" rows="3" class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2"><%= product ? (product.highlights || []).join('\n') : '' %></textarea>
+
+      <div class="grid md:grid-cols-3 gap-4">
+        <input type="number" name="mrp" value="<%= product ? product.mrp : '' %>" placeholder="MRP" required class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+        <input type="number" name="price" value="<%= product ? product.price : '' %>" placeholder="Selling Price" required class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+        <input type="number" name="stock" value="<%= product ? product.stock : '' %>" placeholder="Stock" required class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+      </div>
+
+      <% if (!product) { %>
+        <input name="sku" placeholder="SKU (optional, auto if blank)" class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2">
+      <% } %>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <input name="warranty" value="<%= product ? product.warranty : '' %>" placeholder="Warranty" class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+        <input name="returnPolicy" value="<%= product ? product.returnPolicy : '' %>" placeholder="Return Policy" class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+      </div>
+
+      <div>
+        <p class="text-sm font-medium mb-2">Specifications</p>
+        <div id="specRows" class="space-y-2">
+          <div class="flex gap-2">
+            <input name="specKeys" placeholder="Key (e.g. RAM)" class="flex-1 bg-navy2 border border-border2 rounded-md px-3 py-2">
+            <input name="specValues" placeholder="Value (e.g. 8GB)" class="flex-1 bg-navy2 border border-border2 rounded-md px-3 py-2">
+          </div>
+        </div>
+        <button type="button" onclick="addSpecRow()" class="text-cyan text-xs mt-2">+ Add Specification</button>
+      </div>
+
+      <div>
+        <p class="text-sm font-medium mb-2">Product Images (up to 6)</p>
+        <input type="file" name="images" multiple accept="image/*" class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+        <% if (product && product.images && product.images.length > 0) { %>
+          <div class="flex gap-2 mt-2">
+            <% product.images.forEach(img => { %><img src="<%= img %>" class="w-14 h-14 rounded-md object-cover"><% }) %>
+          </div>
+        <% } %>
+      </div>
+
+      <button class="gradient-btn w-full py-3 rounded-md font-semibold"><%= product ? 'Save Changes' : 'Submit for Review' %></button>
+      <p class="text-textSecondary text-xs">New and edited products require admin approval before going live.</p>
+    </form>
+  </main>
+</div>
+
+<script>
+function addSpecRow() {
+  const div = document.createElement('div');
+  div.className = 'flex gap-2';
+  div.innerHTML = `<input name="specKeys" placeholder="Key" class="flex-1 bg-navy2 border border-border2 rounded-md px-3 py-2">
+    <input name="specValues" placeholder="Value" class="flex-1 bg-navy2 border border-border2 rounded-md px-3 py-2">`;
+  document.getElementById('specRows').appendChild(div);
+}
+</script>
+<%- include('../partials/footer') %>

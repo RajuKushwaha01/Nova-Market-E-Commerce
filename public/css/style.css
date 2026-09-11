@@ -1,0 +1,70 @@
+:root {
+  --navy: #070B17;
+  --navy-2: #0D1324;
+  --violet: #7C3AED;
+  --cyan: #06B6D4;
+  --soft-violet: #A78BFA;
+  --white: #F8FAFC;
+  --text-2: #94A3B8;
+  --card: #111827;
+  --border: #1E293B;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --error: #EF4444;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--navy);
+  color: var(--white);
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4, .heading {
+  font-family: 'Poppins', sans-serif;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, var(--violet), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-btn {
+  background: linear-gradient(90deg, var(--violet), var(--cyan));
+  color: white;
+  border: none;
+  transition: opacity 0.2s ease;
+}
+.gradient-btn:hover { opacity: 0.9; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--violet);
+}
+
+.badge-discount {
+  background: var(--success);
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.price-original {
+  color: var(--text-2);
+  text-decoration: line-through;
+  font-size: 13px;
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: var(--violet); border-radius: 4px; }

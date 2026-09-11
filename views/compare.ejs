@@ -1,0 +1,51 @@
+<%- include('partials/header') %>
+<section class="max-w-6xl mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold heading mb-6">Compare Products</h1>
+
+  <% if (products.length === 0) { %>
+    <div class="card p-10 text-center text-textSecondary">No products added to compare yet.</div>
+  <% } else { %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm card">
+        <thead>
+          <tr>
+            <td class="p-4 font-semibold w-40">Product</td>
+            <% products.forEach(p => { %>
+              <td class="p-4 text-center">
+                <img src="<%= p.images[0] || '' %>" class="w-20 h-20 object-cover rounded-md mx-auto mb-2">
+                <p class="font-medium"><%= p.name %></p>
+                <form action="/compare/<%= p._id %>/remove" method="POST">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="text-error text-xs mt-1">Remove</button>
+                </form>
+              </td>
+            <% }) %>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-t border-border2">
+            <td class="p-4 text-textSecondary">Price</td>
+            <% products.forEach(p => { %><td class="p-4 text-center font-semibold">₹<%= p.price %></td><% }) %>
+          </tr>
+          <tr class="border-t border-border2">
+            <td class="p-4 text-textSecondary">Rating</td>
+            <% products.forEach(p => { %><td class="p-4 text-center">★ <%= p.rating.toFixed(1) %></td><% }) %>
+          </tr>
+          <tr class="border-t border-border2">
+            <td class="p-4 text-textSecondary">Brand</td>
+            <% products.forEach(p => { %><td class="p-4 text-center"><%= p.brand %></td><% }) %>
+          </tr>
+          <% specKeys.forEach(key => { %>
+            <tr class="border-t border-border2">
+              <td class="p-4 text-textSecondary"><%= key %></td>
+              <% products.forEach(p => { %>
+                <td class="p-4 text-center"><%= p.specifications.get(key) || '—' %></td>
+              <% }) %>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>
+<%- include('partials/footer') %>

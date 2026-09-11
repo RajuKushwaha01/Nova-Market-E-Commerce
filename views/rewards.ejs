@@ -1,0 +1,20 @@
+<%- include('partials/header') %>
+<section class="max-w-2xl mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold heading mb-2">NOVA Coins</h1>
+  <div class="card p-6 mb-6">
+    <p class="text-textSecondary text-sm">Your Balance</p>
+    <p class="text-3xl font-bold gradient-text"><%= reward.balance %> Coins</p>
+    <p class="text-xs text-textSecondary mt-1">Earn 1 coin for every ₹100 spent. Redeem up to 10% of your order value at checkout.</p>
+  </div>
+  <h2 class="text-lg font-bold heading mb-3">History</h2>
+  <div class="space-y-2">
+    <% reward.history.slice().reverse().forEach(h => { %>
+      <div class="card p-3 flex justify-between text-sm">
+        <span><%= h.reason %></span>
+        <span class="<%= h.points > 0 ? 'text-success' : 'text-error' %>"><%= h.points > 0 ? '+' : '' %><%= h.points %></span>
+      </div>
+    <% }) %>
+    <% if (reward.history.length === 0) { %><p class="text-textSecondary text-sm">No activity yet.</p><% } %>
+  </div>
+</section>
+<%- include('partials/footer') %>

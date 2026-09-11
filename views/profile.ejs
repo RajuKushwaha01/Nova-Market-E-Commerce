@@ -1,0 +1,48 @@
+<%- include('partials/header') %>
+<section class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+  <h1 class="text-2xl font-bold heading">My Profile</h1>
+  <% if (success) { %><p class="text-success text-sm"><%= success %></p><% } %>
+  <% if (error) { %><p class="text-error text-sm"><%= error %></p><% } %>
+
+  <div class="card p-6">
+    <h3 class="font-semibold mb-4">Personal Information</h3>
+    <form action="/profile/update" method="POST" class="grid md:grid-cols-2 gap-4">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input name="name" value="<%= profileUser.name %>" placeholder="Full Name" required
+        class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+      <input value="<%= profileUser.email %>" disabled
+        class="bg-navy2 border border-border2 rounded-md px-3 py-2 opacity-60">
+      <input name="mobile" value="<%= profileUser.mobile || '' %>" placeholder="Mobile"
+        class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+      <select name="gender" class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+        <option value="">Select Gender</option>
+        <option value="Male" <%= profileUser.gender === 'Male' ? 'selected' : '' %>>Male</option>
+        <option value="Female" <%= profileUser.gender === 'Female' ? 'selected' : '' %>>Female</option>
+        <option value="Other" <%= profileUser.gender === 'Other' ? 'selected' : '' %>>Other</option>
+      </select>
+      <input type="date" name="dob" value="<%= profileUser.dob ? profileUser.dob.toISOString().split('T')[0] : '' %>"
+        class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+      <button class="gradient-btn py-2 rounded-md font-semibold md:col-span-2">Save Changes</button>
+    </form>
+  </div>
+
+  <div class="card p-6">
+    <h3 class="font-semibold mb-4">Change Password</h3>
+    <form action="/profile/change-password" method="POST" class="grid md:grid-cols-3 gap-4">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="password" name="currentPassword" placeholder="Current Password" required
+        class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+      <input type="password" name="newPassword" placeholder="New Password" required minlength="8"
+        class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+      <input type="password" name="confirmNewPassword" placeholder="Confirm New Password" required minlength="8"
+        class="bg-navy2 border border-border2 rounded-md px-3 py-2">
+      <button class="gradient-btn py-2 rounded-md font-semibold md:col-span-3">Update Password</button>
+    </form>
+  </div>
+
+  <div class="card p-6 flex justify-between items-center">
+    <span class="text-textSecondary text-sm">Manage your saved delivery addresses</span>
+    <a href="/addresses" class="text-cyan text-sm font-medium">Go to Addresses →</a>
+  </div>
+</section>
+<%- include('partials/footer') %>

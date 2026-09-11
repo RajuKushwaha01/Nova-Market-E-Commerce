@@ -1,0 +1,69 @@
+<%- include('partials/header') %>
+<%- include('partials/category-nav') %>
+
+<section class="max-w-7xl mx-auto px-4 py-8">
+  <% if (banners.length > 0) { %>
+    <div class="rounded-2xl overflow-hidden mb-10 relative h-64 md:h-80">
+      <img src="<%= banners[0].image %>" class="w-full h-full object-cover" alt="<%= banners[0].title %>">
+    </div>
+  <% } else { %>
+    <div class="rounded-2xl p-10 md:p-16 bg-gradient-to-r from-violet/20 to-cyan/10 border border-border2 mb-10">
+      <h1 class="text-3xl md:text-5xl font-bold heading mb-4">
+        Shop the <span class="gradient-text">Future</span> of Retail
+      </h1>
+      <p class="text-textSecondary max-w-xl mb-6">Premium products, unbeatable prices, delivered fast — only on NOVA MARKET.</p>
+      <div class="flex gap-4">
+        <a href="/products" class="gradient-btn px-6 py-3 rounded-md font-semibold">Explore Products</a>
+        <a href="/products?sort=price_low" class="border border-border2 px-6 py-3 rounded-md font-semibold hover:border-violet">Today's Deals</a>
+      </div>
+    </div>
+  <% } %>
+
+  <h2 class="text-xl font-bold heading mb-4">Shop by Category</h2>
+  <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-14">
+    <% topCategories.forEach(cat => { %>
+      <a href="/products?category=<%= cat.slug %>" class="card p-4 text-center">
+        <% if (cat.image) { %>
+          <img src="<%= cat.image %>" class="w-12 h-12 mx-auto mb-2 object-contain">
+        <% } %>
+        <p class="text-sm font-medium"><%= cat.name %></p>
+      </a>
+    <% }) %>
+  </div>
+
+  <% if (flashSale.length > 0) { %>
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold heading">⚡ Flash Sale</h2>
+      <a href="/products?sort=discount" class="text-cyan text-sm">View All →</a>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-14">
+      <% flashSale.forEach(p => { %><%- include('partials/product-card', { p }) %><% }) %>
+    </div>
+  <% } %>
+
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-bold heading">Trending Products</h2>
+    <a href="/products?sort=popularity" class="text-cyan text-sm">View All →</a>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-14">
+    <% trending.forEach(p => { %><%- include('partials/product-card', { p }) %><% }) %>
+    <% if (trending.length === 0) { %><p class="text-textSecondary col-span-4">No products yet.</p><% } %>
+  </div>
+
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-bold heading">New Arrivals</h2>
+    <a href="/products?sort=newest" class="text-cyan text-sm">View All →</a>
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-14">
+    <% newArrivals.forEach(p => { %><%- include('partials/product-card', { p }) %><% }) %>
+  </div>
+
+  <% if (recentlyViewed.length > 0) { %>
+    <h2 class="text-xl font-bold heading mb-4">Recently Viewed</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-14">
+      <% recentlyViewed.forEach(p => { %><%- include('partials/product-card', { p }) %><% }) %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

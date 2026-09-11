@@ -1,0 +1,111 @@
+<%- include('partials/header') %>
+<%- include('partials/category-nav') %>
+
+<section class="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row gap-6">
+  <aside class="md:w-64 card p-4 h-fit sticky top-24">
+    <h3 class="font-semibold mb-3">Filters</h3>
+    <form method="GET" action="/products" class="space-y-5 text-sm">
+      <input type="hidden" name="category" value="<%= query.category || '' %>">
+      <input type="text" name="q" value="<%= query.q || '' %>" placeholder="Search within results"
+        class="w-full px-3 py-2 rounded-md bg-navy2 border border-border2">
+
+      <div>
+        <label class="text-textSecondary block mb-2 font-medium">Category</label>
+        <div class="space-y-1">
+          <% categories.forEach(c => { %>
+            <label class="flex items-center gap-2">
+              <input type="radio" name="category" value="<%= c.slug %>" <%= query.category === c.slug ? 'checked' : '' %> onchange="this.form.submit()">
+              <%= c.name %>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-textSecondary block mb-2 font-medium">Brand</label>
+        <div class="space-y-1 max-h-40 overflow-y-auto">
+          <% brands.forEach(b => { %>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" name="brand" value="<%= b %>" <%= (query.brand || '').split(',').includes(b) ? 'checked' : '' %>>
+              <%= b %>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-textSecondary block mb-2 font-medium">Price Range</label>
+        <div class="flex gap-2">
+          <input type="number" name="minPrice" value="<%= query.minPrice || '' %>" placeholder="Min"
+            class="w-1/2 px-2 py-2 rounded-md bg-navy2 border border-border2">
+          <input type="number" name="maxPrice" value="<%= query.maxPrice || '' %>" placeholder="Max"
+            class="w-1/2 px-2 py-2 rounded-md bg-navy2 border border-border2">
+        </div>
+      </div>
+
+      <div>
+        <label class="text-textSecondary block mb-2 font-medium">Minimum Rating</label>
+        <select name="rating" class="w-full px-3 py-2 rounded-md bg-navy2 border border-border2">
+          <option value="">Any</option>
+          <option value="4" <%= query.rating === '4' ? 'selected' : '' %>>4★ & above</option>
+          <option value="3" <%= query.rating === '3' ? 'selected' : '' %>>3★ & above</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="text-textSecondary block mb-2 font-medium">Discount</label>
+        <select name="discount" class="w-full px-3 py-2 rounded-md bg-navy2 border border-border2">
+          <option value="">Any</option>
+          <option value="10" <%= query.discount === '10' ? 'selected' : '' %>>10% or more</option>
+          <option value="30" <%= query.discount === '30' ? 'selected' : '' %>>30% or more</option>
+          <option value="50" <%= query.discount === '50' ? 'selected' : '' %>>50% or more</option>
+        </select>
+      </div>
+
+      <button class="gradient-btn w-full py-2 rounded-md font-medium">Apply Filters</button>
+      <a href="/products" class="block text-center text-textSecondary text-sm">Clear All</a>
+    </form>
+  </aside>
+
+  <div class="flex-1">
+    <div class="flex justify-between items-center mb-4">
+      <p class="text-textSecondary text-sm"><%= totalCount %> products found</p>
+      <form method="GET" action="/products" id="sortForm">
+        <% Object.keys(query).forEach(k => { if (k !== 'sort') { %>
+          <input type="hidden" name="<%= k %>" value="<%= query[k] %>">
+        <% } }) %>
+        <select name="sort" onchange="document.getElementById('sortForm').submit()" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+          <option value="">Sort: Relevance</option>
+          <option value="popularity" <%= query.sort === 'popularity' ? 'selected' : '' %>>Popularity</option>
+          <option value="newest" <%= query.sort === 'newest' ? 'selected' : '' %>>Newest</option>
+          <option value="price_low" <%= query.sort === 'price_low' ? 'selected' : '' %>>Price: Low to High</option>
+          <option value="price_high" <%= query.sort === 'price_high' ? 'selected' : '' %>>Price: High to Low</option>
+          <option value="rating" <%= query.sort === 'rating' ? 'selected' : '' %>>Rating</option>
+          <option value="discount" <%= query.sort === 'discount' ? 'selected' : '' %>>Discount</option>
+        </select>
+      </form>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+      <% products.forEach(p => { %>
+        <%- include('partials/product-card', { p }) %>
+      <% }) %>
+      <% if (products.length === 0) { %>
+        <div class="col-span-4 card p-10 text-center text-textSecondary">No products match your filters.</div>
+      <% } %>
+    </div>
+
+    <% if (totalPages > 1) { %>
+      <div class="flex justify-center gap-2 mt-8">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <a href="?<%= new URLSearchParams({...query, page: i}).toString() %>"
+             class="px-3 py-1 rounded-md text-sm <%= currentPage == i ? 'gradient-btn' : 'border border-border2 text-textSecondary' %>">
+            <%= i %>
+          </a>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

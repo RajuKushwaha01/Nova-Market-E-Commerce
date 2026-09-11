@@ -1,0 +1,28 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6">
+    <h1 class="text-2xl font-bold heading mb-4">All Orders</h1>
+    <form method="GET" class="flex gap-3 mb-4">
+      <input name="q" value="<%= query.q || '' %>" placeholder="Search order # or email" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm flex-1">
+      <button class="gradient-btn px-5 py-2 rounded-md text-sm font-medium">Search</button>
+    </form>
+    <div class="card overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-navy2"><tr class="text-left text-textSecondary"><th class="p-3">Order</th><th class="p-3">Customer</th><th class="p-3">Total</th><th class="p-3">Payment</th><th class="p-3">Date</th></tr></thead>
+        <tbody>
+          <% orders.forEach(o => { %>
+            <tr class="border-t border-border2">
+              <td class="p-3"><%= o.orderNumber %></td>
+              <td class="p-3 text-textSecondary"><%= o.user?.name %> (<%= o.user?.email %>)</td>
+              <td class="p-3">₹<%= o.totalAmount %></td>
+              <td class="p-3"><span class="badge-discount"><%= o.paymentMethod %> · <%= o.paymentStatus %></span></td>
+              <td class="p-3 text-textSecondary"><%= new Date(o.createdAt).toDateString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<%- include('../partials/footer') %>

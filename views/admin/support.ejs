@@ -1,0 +1,24 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6">
+    <h1 class="text-2xl font-bold heading mb-4">Support Tickets</h1>
+    <div class="flex gap-3 mb-4 text-sm">
+      <% ['','OPEN','IN_PROGRESS','WAITING','RESOLVED','CLOSED'].forEach(s => { %>
+        <a href="/admin/support?status=<%= s %>" class="px-3 py-1.5 rounded-md <%= activeStatus === s ? 'gradient-btn' : 'border border-border2 text-textSecondary' %>"><%= s || 'All' %></a>
+      <% }) %>
+    </div>
+    <div class="space-y-3">
+      <% tickets.forEach(t => { %>
+        <a href="/admin/support/<%= t._id %>" class="card p-4 flex justify-between items-center block">
+          <div>
+            <p class="font-medium text-sm"><%= t.subject %></p>
+            <p class="text-xs text-textSecondary"><%= t.user?.name %> · <%= t.category %></p>
+          </div>
+          <span class="badge-discount"><%= t.status %></span>
+        </a>
+      <% }) %>
+    </div>
+  </main>
+</div>
+<%- include('../partials/footer') %>

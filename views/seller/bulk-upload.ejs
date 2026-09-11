@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6 max-w-2xl">
+    <h1 class="text-2xl font-bold heading mb-4">Bulk Product Upload</h1>
+    <p class="text-textSecondary text-sm mb-4">
+      CSV columns required: <code class="text-cyan">name, brand, category, description, mrp, price, stock, sku, images</code><br>
+      <code>category</code> must be a category slug (e.g. <code>mobiles</code>). <code>images</code> is pipe-separated URLs.
+    </p>
+
+    <form action="/seller/bulk-upload" method="POST" enctype="multipart/form-data" class="card p-6">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="file" name="csvFile" accept=".csv" required class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2 mb-4">
+      <button class="gradient-btn px-6 py-2 rounded-md font-semibold text-sm">Upload & Import</button>
+    </form>
+
+    <% if (results) { %>
+      <div class="card p-4 mt-4 text-sm">
+        <p class="text-success">Imported <%= results.imported %> of <%= results.total %> rows.</p>
+      </div>
+    <% } %>
+
+    <% if (errors && errors.length > 0) { %>
+      <div class="card p-4 mt-4 text-sm">
+        <p class="font-semibold text-error mb-2">Errors:</p>
+        <ul class="list-disc list-inside text-textSecondary space-y-1">
+          <% errors.forEach(e => { %><li><%= e %></li><% }) %>
+        </ul>
+      </div>
+    <% } %>
+  </main>
+</div>
+<%- include('../partials/footer') %>

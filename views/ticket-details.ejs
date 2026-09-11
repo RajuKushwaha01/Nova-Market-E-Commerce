@@ -1,0 +1,28 @@
+<%- include('partials/header') %>
+<section class="max-w-3xl mx-auto px-4 py-8">
+  <h1 class="text-xl font-bold heading mb-1"><%= ticket.subject %></h1>
+  <p class="text-textSecondary text-sm mb-6"><%= ticket.category %> · Status: <span class="text-cyan"><%= ticket.status %></span></p>
+
+  <div class="space-y-3 mb-6">
+    <% ticket.messages.forEach(m => { %>
+      <div class="card p-3 <%= m.senderRole === 'customer' ? '' : 'border-violet' %>">
+        <p class="text-xs text-textSecondary mb-1"><%= m.senderRole %> · <%= new Date(m.createdAt).toLocaleString() %></p>
+        <p class="text-sm"><%= m.text %></p>
+      </div>
+    <% }) %>
+  </div>
+
+  <form action="<%= isAdmin ? '/admin/support/' + ticket._id + '/reply' : '/support/tickets/' + ticket._id + '/reply' %>" method="POST" class="card p-4 space-y-3">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <textarea name="message" placeholder="Type your reply..." required rows="3" class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm"></textarea>
+    <% if (isAdmin) { %>
+      <select name="status" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+        <% ['OPEN','IN_PROGRESS','WAITING','RESOLVED','CLOSED'].forEach(s => { %>
+          <option value="<%= s %>" <%= ticket.status === s ? 'selected' : '' %>><%= s %></option>
+        <% }) %>
+      </select>
+    <% } %>
+    <button class="gradient-btn px-5 py-2 rounded-md text-sm font-medium">Send Reply</button>
+  </form>
+</section>
+<%- include('partials/footer') %>

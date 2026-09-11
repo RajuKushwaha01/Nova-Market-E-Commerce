@@ -1,0 +1,39 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6">
+    <h1 class="text-2xl font-bold heading mb-4">Orders</h1>
+
+    <div class="flex gap-3 overflow-x-auto mb-6 text-sm">
+      <% ['','PLACED','CONFIRMED','PACKED','SHIPPED','OUT_FOR_DELIVERY','DELIVERED','CANCELLED','RETURNED'].forEach(s => { %>
+        <a href="/seller/orders?status=<%= s %>" class="px-3 py-1.5 rounded-md whitespace-nowrap <%= activeStatus === s ? 'gradient-btn' : 'border border-border2 text-textSecondary' %>">
+          <%= s || 'All' %>
+        </a>
+      <% }) %>
+    </div>
+
+    <div class="space-y-4">
+      <% rows.forEach(({order, item}) => { %>
+        <div class="card p-4 flex items-center gap-4">
+          <img src="<%= item.image %>" class="w-14 h-14 rounded-md object-cover bg-navy2">
+          <div class="flex-1">
+            <p class="text-sm font-medium"><%= item.name %></p>
+            <p class="text-xs text-textSecondary">Order #<%= order.orderNumber %> · Qty <%= item.quantity %> · ₹<%= item.price * item.quantity %></p>
+          </div>
+          <form action="/seller/orders/<%= order._id %>/items/<%= item._id %>/update-status" method="POST" class="flex gap-2 items-center">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <select name="status" class="bg-navy2 border border-border2 rounded-md px-2 py-1.5 text-sm">
+              <% ['CONFIRMED','PACKED','SHIPPED','OUT_FOR_DELIVERY','DELIVERED'].forEach(s => { %>
+                <option value="<%= s %>" <%= item.status === s ? 'selected' : '' %>><%= s.replace(/_/g,' ') %></option>
+              <% }) %>
+            </select>
+            <input name="trackingId" placeholder="Tracking ID" value="<%= item.trackingId || '' %>" class="bg-navy2 border border-border2 rounded-md px-2 py-1.5 text-sm w-28">
+            <button class="gradient-btn px-4 py-1.5 rounded-md text-xs font-medium">Update</button>
+          </form>
+        </div>
+      <% }) %>
+      <% if (rows.length === 0) { %><div class="card p-10 text-center text-textSecondary">No orders found.</div><% } %>
+    </div>
+  </main>
+</div>
+<%- include('../partials/footer') %>

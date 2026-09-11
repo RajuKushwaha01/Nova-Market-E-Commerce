@@ -1,0 +1,53 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6">
+    <h1 class="text-2xl font-bold heading mb-4">Users</h1>
+    <form method="GET" class="flex gap-3 mb-4">
+      <input name="q" value="<%= query.q || '' %>" placeholder="Search by name or email" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm flex-1">
+      <select name="role" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+        <option value="">All Roles</option>
+        <% ['customer','seller','admin','support','delivery'].forEach(r => { %>
+          <option value="<%= r %>" <%= query.role === r ? 'selected' : '' %>><%= r %></option>
+        <% }) %>
+      </select>
+      <button class="gradient-btn px-5 py-2 rounded-md text-sm font-medium">Search</button>
+    </form>
+
+    <div class="card overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-navy2"><tr class="text-left text-textSecondary"><th class="p-3">Name</th><th class="p-3">Email</th><th class="p-3">Role</th><th class="p-3">Status</th><th class="p-3">Actions</th></tr></thead>
+        <tbody>
+          <% users.forEach(u => { %>
+            <tr class="border-t border-border2">
+              <td class="p-3"><%= u.name %></td>
+              <td class="p-3 text-textSecondary"><%= u.email %></td>
+              <td class="p-3">
+                <form action="/admin/users/<%= u._id %>/role" method="POST" class="inline-flex gap-1">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <select name="role" onchange="this.form.submit()" class="bg-navy2 border border-border2 rounded-md px-2 py-1 text-xs">
+                    <% ['customer','seller','admin','support','delivery'].forEach(r => { %>
+                      <option value="<%= r %>" <%= u.role === r ? 'selected' : '' %>><%= r %></option>
+                    <% }) %>
+                  </select>
+                </form>
+              </td>
+              <td class="p-3"><%= u.isBlocked ? '<span class="text-error">Blocked</span>' : '<span class="text-success">Active</span>' %></td>
+              <td class="p-3 space-x-2 whitespace-nowrap">
+                <form action="/admin/users/<%= u._id %>/toggle-block" method="POST" class="inline">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="text-warning text-xs"><%= u.isBlocked ? 'Unblock' : 'Block' %></button>
+                </form>
+                <form action="/admin/users/<%= u._id %>/delete" method="POST" class="inline" onsubmit="return confirm('Delete this user?')">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="text-error text-xs">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<%- include('../partials/footer') %>

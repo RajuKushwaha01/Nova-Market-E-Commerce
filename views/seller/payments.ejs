@@ -1,0 +1,37 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6">
+    <h1 class="text-2xl font-bold heading mb-6">Payments & Settlements</h1>
+
+    <div class="grid grid-cols-3 gap-4 mb-6">
+      <div class="card p-4"><p class="text-textSecondary text-xs">Available</p><p class="text-xl font-bold text-success">₹<%= totals.AVAILABLE || 0 %></p></div>
+      <div class="card p-4"><p class="text-textSecondary text-xs">Pending</p><p class="text-xl font-bold text-warning">₹<%= totals.PENDING || 0 %></p></div>
+      <div class="card p-4"><p class="text-textSecondary text-xs">Paid</p><p class="text-xl font-bold">₹<%= totals.PAID || 0 %></p></div>
+    </div>
+
+    <div class="card overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-navy2">
+          <tr class="text-left text-textSecondary">
+            <th class="p-3">Order</th><th class="p-3">Sale</th><th class="p-3">Commission</th><th class="p-3">Fees</th><th class="p-3">Net Payable</th><th class="p-3">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% settlements.forEach(s => { %>
+            <tr class="border-t border-border2">
+              <td class="p-3"><%= s.order?.orderNumber || '—' %></td>
+              <td class="p-3">₹<%= s.saleAmount %></td>
+              <td class="p-3">₹<%= s.commissionAmount %> (<%= s.commissionPercent %>%)</td>
+              <td class="p-3">₹<%= s.fixedFee + s.shippingFee + s.paymentFee %></td>
+              <td class="p-3 font-semibold">₹<%= s.netPayable %></td>
+              <td class="p-3"><span class="badge-discount"><%= s.status %></span></td>
+            </tr>
+          <% }) %>
+          <% if (settlements.length === 0) { %><tr><td colspan="6" class="p-6 text-center text-textSecondary">No settlements yet.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<%- include('../partials/footer') %>

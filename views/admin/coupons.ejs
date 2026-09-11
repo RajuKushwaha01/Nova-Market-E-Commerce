@@ -1,0 +1,48 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6 max-w-4xl">
+    <h1 class="text-2xl font-bold heading mb-4">Coupons</h1>
+
+    <form action="/admin/coupons/create" method="POST" class="card p-5 grid md:grid-cols-3 gap-3 mb-6">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input name="code" placeholder="CODE (e.g. SAVE500)" required class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <select name="discountType" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+        <option value="Fixed">Fixed ₹ Off</option><option value="Percentage">Percentage Off</option>
+      </select>
+      <input type="number" name="discountValue" placeholder="Discount Value" required class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <input type="number" name="maxDiscount" placeholder="Max Discount (optional)" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <input type="number" name="minOrderValue" placeholder="Min Order Value" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <select name="scope" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+        <option value="All">All Orders</option><option value="FirstOrder">First Order Only</option>
+      </select>
+      <input type="number" name="usageLimit" placeholder="Total Usage Limit" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <input type="number" name="perUserLimit" placeholder="Per User Limit" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <input type="date" name="expiryDate" required class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <button class="gradient-btn px-5 py-2 rounded-md text-sm font-medium md:col-span-3">Create Coupon</button>
+    </form>
+
+    <div class="card overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-navy2"><tr class="text-left text-textSecondary"><th class="p-3">Code</th><th class="p-3">Discount</th><th class="p-3">Min Order</th><th class="p-3">Used</th><th class="p-3">Expiry</th><th class="p-3">Status</th><th class="p-3">Actions</th></tr></thead>
+        <tbody>
+          <% coupons.forEach(c => { %>
+            <tr class="border-t border-border2">
+              <td class="p-3 font-mono"><%= c.code %></td>
+              <td class="p-3"><%= c.discountType === 'Percentage' ? c.discountValue + '%' : '₹' + c.discountValue %></td>
+              <td class="p-3">₹<%= c.minOrderValue %></td>
+              <td class="p-3"><%= c.usedCount %>/<%= c.usageLimit %></td>
+              <td class="p-3 text-textSecondary"><%= new Date(c.expiryDate).toDateString() %></td>
+              <td class="p-3"><span class="badge-discount"><%= c.isActive ? 'Active' : 'Inactive' %></span></td>
+              <td class="p-3 space-x-2">
+                <form action="/admin/coupons/<%= c._id %>/toggle" method="POST" class="inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="text-cyan text-xs"><%= c.isActive ? 'Disable' : 'Enable' %></button></form>
+                <form action="/admin/coupons/<%= c._id %>/delete" method="POST" class="inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="text-error text-xs">Delete</button></form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<%- include('../partials/footer') %>

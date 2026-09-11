@@ -1,0 +1,50 @@
+<%- include('partials/header') %>
+
+<section class="max-w-md mx-auto px-4 py-16">
+  <div class="card p-8">
+    <h1 class="text-xl font-bold heading mb-1 gradient-text">Log in to NOVA MARKET</h1>
+    <p class="text-textSecondary text-sm mb-6">Choose your portal to continue</p>
+
+    <!-- Portal Tabs -->
+    <div class="grid grid-cols-3 gap-2 mb-6 text-sm">
+      <a href="/login?portal=customer" class="text-center py-2 rounded-md border <%= portal === 'customer' ? 'gradient-btn border-transparent' : 'border-border2 text-textSecondary hover:border-violet' %>">
+        🛍 Customer
+      </a>
+      <a href="/login?portal=seller" class="text-center py-2 rounded-md border <%= portal === 'seller' ? 'gradient-btn border-transparent' : 'border-border2 text-textSecondary hover:border-violet' %>">
+        🏪 Seller
+      </a>
+      <a href="/login?portal=admin" class="text-center py-2 rounded-md border <%= portal === 'admin' ? 'gradient-btn border-transparent' : 'border-border2 text-textSecondary hover:border-violet' %>">
+        🛠 Admin
+      </a>
+    </div>
+
+    <% if (error) { %><p class="text-error text-sm mb-4"><%= error %></p><% } %>
+
+    <form action="/login" method="POST" class="space-y-4">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="portal" value="<%= portal %>">
+
+      <input type="email" name="email" placeholder="<%= portal === 'seller' ? 'Business Email' : portal === 'admin' ? 'Admin Email' : 'Email' %>" required
+        class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2">
+      <input type="password" name="password" placeholder="Password" required
+        class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2">
+
+      <p class="text-right text-xs"><a href="/forgot-password" class="text-cyan">Forgot password?</a></p>
+
+      <button class="gradient-btn w-full py-2 rounded-md font-semibold">
+        <%= portal === 'seller' ? 'Login to Seller Dashboard' : portal === 'admin' ? 'Login to Admin Panel' : 'Login' %>
+      </button>
+    </form>
+
+    <% if (portal === 'customer') { %>
+      <p class="text-textSecondary text-sm mt-4">No account? <a href="/register" class="text-cyan">Register</a></p>
+      <p class="text-textSecondary text-xs mt-1">Want to sell on NOVA? <a href="/seller/register" class="text-cyan">Become a Seller</a></p>
+    <% } else if (portal === 'seller') { %>
+      <p class="text-textSecondary text-sm mt-4">New seller? <a href="/seller/register" class="text-cyan">Apply here</a></p>
+    <% } else { %>
+      <p class="text-textSecondary text-xs mt-4">Admin accounts are created internally and cannot self-register.</p>
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

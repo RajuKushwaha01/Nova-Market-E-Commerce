@@ -1,0 +1,16 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6 max-w-2xl">
+    <h1 class="text-2xl font-bold heading mb-6">Reports</h1>
+    <div class="card p-5 space-y-4">
+      <% ['sales','products','sellers','users','commission','returns'].forEach(type => { %>
+        <div class="flex justify-between items-center">
+          <span class="text-sm capitalize"><%= type %> Report</span>
+          <a href="/admin/reports/export?type=<%= type %>&range=month" class="gradient-btn px-4 py-1.5 rounded-md text-xs font-medium">Download CSV</a>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+</div>
+<%- include('../partials/footer') %>

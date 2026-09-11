@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6">
+    <h1 class="text-2xl font-bold heading mb-4">Sellers</h1>
+    <div class="flex gap-3 mb-4 text-sm">
+      <% ['','pending','approved','suspended','rejected'].forEach(s => { %>
+        <a href="/admin/sellers?status=<%= s %>" class="px-3 py-1.5 rounded-md <%= activeStatus === s ? 'gradient-btn' : 'border border-border2 text-textSecondary' %>"><%= s || 'All' %></a>
+      <% }) %>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      <% sellerStats.forEach(({seller, productCount}) => { %>
+        <div class="card p-4">
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <p class="font-medium"><%= seller.sellerProfile?.businessName || seller.name %></p>
+              <p class="text-textSecondary text-xs"><%= seller.email %></p>
+            </div>
+            <span class="badge-discount"><%= seller.sellerProfile?.status %></span>
+          </div>
+          <p class="text-xs text-textSecondary mb-3">GST: <%= seller.sellerProfile?.gstNumber || '—' %> · Products: <%= productCount %></p>
+          <div class="flex gap-2 text-xs">
+            <form action="/admin/sellers/<%= seller._id %>/status" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="status" value="approved"><button class="gradient-btn px-3 py-1 rounded-md">Approve</button></form>
+            <form action="/admin/sellers/<%= seller._id %>/status" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="status" value="suspended"><button class="border border-warning text-warning px-3 py-1 rounded-md">Suspend</button></form>
+            <form action="/admin/sellers/<%= seller._id %>/status" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="status" value="rejected"><button class="border border-error text-error px-3 py-1 rounded-md">Reject</button></form>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+</div>
+<%- include('../partials/footer') %>

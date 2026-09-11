@@ -1,0 +1,95 @@
+<%- include('partials/header') %>
+
+<section class="max-w-6xl mx-auto px-4 py-8 grid md:grid-cols-3 gap-6">
+  <div class="md:col-span-2 space-y-6">
+    <h1 class="text-2xl font-bold heading">Your Cart</h1>
+
+    <% if (!sellerGroups || sellerGroups.length === 0) { %>
+      <div class="card p-10 text-center text-textSecondary">
+        Your cart is empty. <a href="/products" class="text-cyan">Start shopping</a>
+      </div>
+    <% } else { %>
+      <% sellerGroups.forEach(group => { %>
+        <div class="card p-4">
+          <p class="text-xs text-textSecondary mb-3 uppercase tracking-wide">Sold by <%= group.sellerName %></p>
+          <div class="space-y-4">
+            <% group.items.forEach(item => { %>
+              <div class="flex items-center gap-4 pb-4 border-b border-border2 last:border-0 last:pb-0">
+                <img src="<%= item.image || '' %>" class="w-16 h-16 object-cover rounded-md bg-navy2">
+                <div class="flex-1">
+                  <p class="font-medium text-sm"><%= item.product.name %></p>
+                  <% if (item.label) { %><p class="text-xs text-textSecondary"><%= item.label %></p><% } %>
+                  <p class="text-sm mt-1">₹<%= item.price %> x <%= item.quantity %> = <span class="font-semibold">₹<%= item.lineTotal %></span></p>
+                  <% if (!item.stockOk) { %>
+                    <p class="text-error text-xs mt-1">Only <%= item.availableStock %> left — reduce quantity</p>
+                  <% } %>
+                </div>
+                <div class="flex flex-col gap-2 items-end">
+                  <form action="/cart/update" method="POST" class="flex items-center gap-2">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="hidden" name="cartItemId" value="<%= item.cartItemId %>">
+                    <input type="number" name="quantity" value="<%= item.quantity %>" min="1" class="w-16 bg-navy2 border border-border2 rounded-md px-2 py-1 text-sm">
+                    <button class="text-cyan text-xs">Update</button>
+                  </form>
+                  <div class="flex gap-3 text-xs">
+                    <form action="/cart/<%= item.cartItemId %>/save-for-later" method="POST">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="text-textSecondary">Save for later</button>
+                    </form>
+                    <form action="/cart/<%= item.cartItemId %>/remove" method="POST">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="text-error">Remove</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+          <p class="text-right text-sm mt-3 text-textSecondary">Seller subtotal: <span class="text-white font-semibold">₹<%= group.sellerTotal %></span></p>
+        </div>
+      <% }) %>
+    <% } %>
+
+    <% if (savedItems.length > 0) { %>
+      <h2 class="text-lg font-bold heading mt-8">Saved for Later</h2>
+      <div class="card p-4 space-y-3">
+        <% savedItems.forEach(item => { %>
+          <div class="flex items-center gap-4">
+            <img src="<%= item.product.images[0] || '' %>" class="w-14 h-14 object-cover rounded-md bg-navy2">
+            <div class="flex-1">
+              <p class="text-sm font-medium"><%= item.product.name %></p>
+              <p class="text-xs text-textSecondary">₹<%= item.product.price %></p>
+            </div>
+            <form action="/cart/<%= item._id %>/move-to-cart" method="POST">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="text-cyan text-xs">Move to Cart</button>
+            </form>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+
+  <% if (summary) { %>
+    <div class="card p-5 h-fit">
+      <h3 class="font-semibold mb-4">Price Details</h3>
+      <div class="space-y-2 text-sm text-textSecondary">
+        <div class="flex justify-between"><span>MRP Total</span><span>₹<%= summary.totalMrp %></span></div>
+        <div class="flex justify-between"><span>Discount</span><span class="text-success">- ₹<%= summary.productDiscount %></span></div>
+        <div class="flex justify-between"><span>Delivery</span><span><%= summary.deliveryFee === 0 ? 'FREE' : '₹' + summary.deliveryFee %></span></div>
+      </div>
+      <hr class="border-border2 my-3">
+      <div class="flex justify-between font-bold text-white"><span>Total Amount</span><span>₹<%= summary.finalAmount %></span></div>
+
+      <% if (summary.hasIssues) { %>
+        <p class="text-error text-xs mt-3">Some items exceed available stock. Update quantities before checkout.</p>
+      <% } %>
+
+      <a href="/checkout" class="gradient-btn block text-center py-3 rounded-md font-semibold mt-4 <%= summary.hasIssues ? 'opacity-50 pointer-events-none' : '' %>">
+        Proceed to Checkout
+      </a>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

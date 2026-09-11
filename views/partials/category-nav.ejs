@@ -1,0 +1,9 @@
+<nav class="bg-navy2 border-b border-border2">
+  <div class="max-w-7xl mx-auto px-4 flex gap-6 overflow-x-auto py-3 text-sm">
+    <% navCategories.forEach(cat => { %>
+      <a href="/products?category=<%= cat.slug %>" class="whitespace-nowrap text-textSecondary hover:text-cyan transition-colors">
+        <%= cat.name %>
+      </a>
+    <% }) %>
+  </div>
+</nav>

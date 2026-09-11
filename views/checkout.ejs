@@ -1,0 +1,107 @@
+<%- include('partials/header') %>
+
+<section class="max-w-5xl mx-auto px-4 py-8">
+  <h1 class="text-2xl font-bold heading mb-6">Checkout</h1>
+
+  <% if (reservationExpiresAt) { %>
+    <div class="card p-3 mb-6 text-sm text-warning" id="reservationTimer" data-expires="<%= reservationExpiresAt %>">
+      Items reserved — complete checkout before the timer runs out.
+    </div>
+  <% } %>
+
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="md:col-span-2 space-y-6">
+
+      <div class="card p-5">
+        <h3 class="font-semibold mb-4">1. Delivery Address</h3>
+        <% if (addresses.length === 0) { %>
+          <p class="text-textSecondary text-sm mb-3">No saved addresses.</p>
+        <% } %>
+        <div class="space-y-2">
+          <% addresses.forEach((a, i) => { %>
+            <label class="flex items-start gap-3 border border-border2 rounded-md p-3 cursor-pointer">
+              <input type="radio" name="addressId" value="<%= a._id %>" <%= i === 0 ? 'checked' : '' %> class="mt-1">
+              <div class="text-sm">
+                <p class="font-medium"><%= a.fullName %> — <%= a.mobile %> <span class="badge-discount ml-2"><%= a.addressType %></span></p>
+                <p class="text-textSecondary"><%= a.houseNumber %>, <%= a.street %>, <%= a.city %>, <%= a.state %> - <%= a.pincode %></p>
+              </div>
+            </label>
+          <% }) %>
+        </div>
+        <a href="/addresses/new" class="text-cyan text-sm inline-block mt-3">+ Add New Address</a>
+      </div>
+
+      <div class="card p-5">
+        <h3 class="font-semibold mb-4">2. Delivery Option</h3>
+        <div class="flex gap-4 text-sm">
+          <label class="flex items-center gap-2"><input type="radio" name="deliveryOption" value="Standard" checked> Standard (5 days) — Free</label>
+          <label class="flex items-center gap-2"><input type="radio" name="deliveryOption" value="Express"> Express (2 days) — ₹99</label>
+        </div>
+      </div>
+
+      <div class="card p-5">
+        <h3 class="font-semibold mb-4">Apply Coupon</h3>
+        <div class="flex gap-2">
+          <input type="text" id="couponInput" placeholder="Enter coupon code" class="flex-1 bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm uppercase">
+          <button type="button" id="applyCouponBtn" class="gradient-btn px-5 py-2 rounded-md text-sm font-medium">Apply</button>
+        </div>
+        <p id="couponMessage" class="text-xs mt-2"></p>
+      </div>
+
+      <div class="card p-5">
+        <h3 class="font-semibold mb-4">3. Payment Method</h3>
+        <div class="space-y-2 text-sm">
+          <label class="flex items-center gap-2 p-3 border border-border2 border-violet rounded-md cursor-pointer">
+            <input type="radio" name="paymentMethod" value="Online" checked> Pay Online (UPI / Card / Netbanking / Wallet)
+          </label>
+          <label class="flex items-center gap-2 p-3 border border-border2 rounded-md cursor-pointer <%= codEligible ? '' : 'opacity-50' %>">
+            <input type="radio" name="paymentMethod" value="COD" <%= codEligible ? '' : 'disabled' %>>
+            Cash on Delivery <% if (codEligible) { %>(+₹<%= codFee %> fee)<% } else { %>(Not available above ₹20,000)<% } %>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-5 h-fit">
+      <h3 class="font-semibold mb-4">Price Details</h3>
+      <div class="space-y-2 text-sm text-textSecondary">
+        <div class="flex justify-between"><span>MRP Total</span><span>₹<%= summary.totalMrp %></span></div>
+        <div class="flex justify-between"><span>Discount</span><span class="text-success">- ₹<%= summary.productDiscount %></span></div>
+        <div class="flex justify-between"><span>Delivery</span><span><%= summary.deliveryFee === 0 ? 'FREE' : '₹' + summary.deliveryFee %></span></div>
+        <div class="flex justify-between" id="couponRow" style="display:none;"><span>Coupon Discount</span><span class="text-success" id="couponDiscountAmount">- ₹0</span></div>
+      </div>
+      <hr class="border-border2 my-3">
+      <div class="flex justify-between font-bold text-white">
+        <span>Total</span><span id="finalTotal">₹<%= summary.subtotal + summary.deliveryFee %></span>
+      </div>
+
+      <button id="placeOrderBtn" class="gradient-btn w-full py-3 rounded-md font-semibold mt-4">Place Order</button>
+      <p id="checkoutError" class="text-error text-xs mt-2"></p>
+    </div>
+  </div>
+</section>
+
+<form id="codForm" action="/checkout/place-cod" method="POST" class="hidden">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <input type="hidden" name="addressId" id="codAddressId">
+  <input type="hidden" name="deliveryOption" id="codDeliveryOption">
+  <input type="hidden" name="couponCode" id="codCouponCode">
+</form>
+
+<script>
+  window.RAZORPAY_KEY = "<%= razorpayKey %>";
+  window.csrfToken = "<%= csrfToken %>";
+  window.CHECKOUT_SUBTOTAL = <%- summary.subtotal %>;
+  window.CHECKOUT_DELIVERY_FEE = <%- summary.deliveryFee %>;
+
+  document.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('input[name="paymentMethod"]').forEach((r) => {
+        r.closest('label').classList.toggle('border-violet', r.checked);
+      });
+    });
+  });
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="/js/checkout.js"></script>
+<%- include('partials/footer') %>

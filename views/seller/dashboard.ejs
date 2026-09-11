@@ -1,0 +1,26 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6 max-w-6xl">
+    <h1 class="text-2xl font-bold heading mb-6">Dashboard</h1>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="card p-4"><p class="text-textSecondary text-xs">Today's Sales</p><p class="text-xl font-bold">₹<%= todaySales %></p></div>
+      <div class="card p-4"><p class="text-textSecondary text-xs">Total Sales</p><p class="text-xl font-bold">₹<%= totalSales %></p></div>
+      <div class="card p-4"><p class="text-textSecondary text-xs">Orders</p><p class="text-xl font-bold"><%= orderCount %></p></div>
+      <div class="card p-4"><p class="text-textSecondary text-xs">Products</p><p class="text-xl font-bold"><%= productCount %></p></div>
+      <div class="card p-4"><p class="text-textSecondary text-xs">Low Stock</p><p class="text-xl font-bold text-warning"><%= lowStock %></p></div>
+      <div class="card p-4"><p class="text-textSecondary text-xs">Out of Stock</p><p class="text-xl font-bold text-error"><%= outOfStock %></p></div>
+      <div class="card p-4"><p class="text-textSecondary text-xs">Pending Orders</p><p class="text-xl font-bold"><%= pendingOrders %></p></div>
+      <div class="card p-4"><p class="text-textSecondary text-xs">Returns</p><p class="text-xl font-bold"><%= returns %></p></div>
+    </div>
+
+    <h2 class="text-lg font-bold heading mb-3">Payments Snapshot</h2>
+    <div class="grid grid-cols-3 gap-4">
+      <div class="card p-4"><p class="text-textSecondary text-xs">Available Balance</p><p class="text-xl font-bold text-success">₹<%= availableBalance %></p></div>
+      <div class="card p-4"><p class="text-textSecondary text-xs">Pending Settlement</p><p class="text-xl font-bold text-warning">₹<%= pendingPayments %></p></div>
+      <div class="card p-4"><p class="text-textSecondary text-xs">Paid Out</p><p class="text-xl font-bold">₹<%= paidAmount %></p></div>
+    </div>
+  </main>
+</div>
+<%- include('../partials/footer') %>

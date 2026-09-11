@@ -1,0 +1,83 @@
+<%- include('partials/header') %>
+<section class="max-w-4xl mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-xl font-bold heading">Order #<%= order.orderNumber %></h1>
+    <a href="/orders/<%= order._id %>/invoice" target="_blank" class="text-cyan text-sm">View Invoice →</a>
+  </div>
+
+  <div class="card p-5 mb-6 text-sm">
+    <p class="font-medium mb-1">Delivery Address</p>
+    <p class="text-textSecondary"><%= order.address.fullName %>, <%= order.address.houseNumber %>, <%= order.address.street %>, <%= order.address.city %>, <%= order.address.state %> - <%= order.address.pincode %></p>
+  </div>
+
+  <% const steps = ['PLACED','CONFIRMED','PACKED','SHIPPED','OUT_FOR_DELIVERY','DELIVERED']; %>
+
+  <% order.items.forEach(item => { %>
+    <div class="card p-5 mb-4">
+      <div class="flex gap-4 mb-4">
+        <img src="<%= item.image %>" class="w-16 h-16 object-cover rounded-md bg-navy2">
+        <div class="flex-1">
+          <p class="font-medium text-sm"><%= item.name %></p>
+          <% if (item.variantLabel) { %><p class="text-xs text-textSecondary"><%= item.variantLabel %></p><% } %>
+          <p class="text-sm">₹<%= item.price %> x <%= item.quantity %></p>
+        </div>
+      </div>
+
+      <% if (['CANCELLED','RETURNED','RETURN_REQUESTED','REFUNDED'].includes(item.status)) { %>
+        <p class="badge-discount inline-block mb-3"><%= item.status.replace(/_/g,' ') %></p>
+      <% } else { %>
+        <% const currentIdx = steps.indexOf(item.status); %>
+        <div class="flex items-center mb-2">
+          <% steps.forEach((step, i) => { %>
+            <div class="flex items-center flex-1">
+              <div class="w-3 h-3 rounded-full <%= i <= currentIdx ? 'bg-cyan' : 'bg-border2' %>"></div>
+              <% if (i < steps.length - 1) { %>
+                <div class="flex-1 h-0.5 <%= i < currentIdx ? 'bg-cyan' : 'bg-border2' %>"></div>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+        <div class="flex justify-between text-xs text-textSecondary mb-3">
+          <% steps.forEach(step => { %><span class="w-16 text-center"><%= step.replace(/_/g,' ') %></span><% }) %>
+        </div>
+      <% } %>
+
+      <% if (item.returnInfo && item.returnInfo.status) { %>
+        <p class="text-xs text-textSecondary">Return status: <span class="text-cyan"><%= item.returnInfo.status %></span></p>
+      <% } %>
+
+      <div class="flex gap-4 mt-3 text-xs flex-wrap">
+        <% if (!['SHIPPED','OUT_FOR_DELIVERY','DELIVERED','CANCELLED','RETURN_REQUESTED','RETURNED','REFUNDED'].includes(item.status)) { %>
+          <form action="/orders/<%= order._id %>/items/<%= item._id %>/cancel" method="POST" onsubmit="return confirm('Cancel this item?')">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <select name="reason" class="bg-navy2 border border-border2 rounded-md px-2 py-1 mr-2">
+              <option>Changed mind</option><option>Ordered by mistake</option>
+              <option>Price issue</option><option>Delivery delay</option><option>Other</option>
+            </select>
+            <button class="text-error">Cancel Item</button>
+          </form>
+        <% } %>
+
+        <% if (item.status === 'DELIVERED') { %>
+          <details>
+            <summary class="text-cyan cursor-pointer">Return / Exchange</summary>
+            <form action="/orders/<%= order._id %>/items/<%= item._id %>/return" method="POST" class="mt-2 space-y-2 max-w-sm">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <select name="reason" class="w-full bg-navy2 border border-border2 rounded-md px-2 py-1">
+                <option>Damaged</option><option>Wrong product</option><option>Missing item</option>
+                <option>Not working</option><option>Size issue</option><option>Other</option>
+              </select>
+              <textarea name="details" placeholder="Describe the issue" class="w-full bg-navy2 border border-border2 rounded-md px-2 py-1"></textarea>
+              <input name="images" placeholder="Image URLs, comma-separated" class="w-full bg-navy2 border border-border2 rounded-md px-2 py-1">
+              <select name="type" class="w-full bg-navy2 border border-border2 rounded-md px-2 py-1">
+                <option value="RETURN">Return</option><option value="EXCHANGE">Exchange</option>
+              </select>
+              <button class="gradient-btn px-4 py-1.5 rounded-md text-xs">Submit Request</button>
+            </form>
+          </details>
+        <% } %>
+      </div>
+    </div>
+  <% }) %>
+</section>
+<%- include('partials/footer') %>

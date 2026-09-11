@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6 max-w-2xl">
+    <h1 class="text-2xl font-bold heading mb-4">Brands</h1>
+
+    <form action="/admin/brands/create" method="POST" class="card p-4 flex gap-3 mb-6">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input name="name" placeholder="Brand name" required class="flex-1 bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <button class="gradient-btn px-5 py-2 rounded-md text-sm font-medium">Add Brand</button>
+    </form>
+
+    <div class="card overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-navy2"><tr class="text-left text-textSecondary"><th class="p-3">Name</th><th class="p-3">Status</th><th class="p-3">Actions</th></tr></thead>
+        <tbody>
+          <% brands.forEach(b => { %>
+            <tr class="border-t border-border2">
+              <td class="p-3"><%= b.name %></td>
+              <td class="p-3"><span class="badge-discount"><%= b.isActive ? 'Active' : 'Inactive' %></span></td>
+              <td class="p-3 space-x-2">
+                <form action="/admin/brands/<%= b._id %>/toggle" method="POST" class="inline"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="text-cyan text-xs"><%= b.isActive ? 'Deactivate' : 'Activate' %></button></form>
+                <form action="/admin/brands/<%= b._id %>/delete" method="POST" class="inline" onsubmit="return confirm('Delete?')"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="text-error text-xs">Delete</button></form>
+              </td>
+            </tr>
+          <% }) %>
+          <% if (brands.length === 0) { %><tr><td colspan="3" class="p-6 text-center text-textSecondary">No brands yet.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+<%- include('../partials/footer') %>

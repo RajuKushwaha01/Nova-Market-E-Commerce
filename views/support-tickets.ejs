@@ -1,0 +1,27 @@
+<%- include('partials/header') %>
+<section class="max-w-3xl mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold heading">Support Tickets</h1>
+  </div>
+
+  <form action="/support/tickets/create" method="POST" class="card p-5 space-y-3 mb-8">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input name="subject" placeholder="Subject" required class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+    <select name="category" class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <option>Order Issue</option><option>Payment Issue</option><option>Return Issue</option><option>Product Issue</option><option>Other</option>
+    </select>
+    <textarea name="message" placeholder="Describe your issue" required rows="3" class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm"></textarea>
+    <button class="gradient-btn px-5 py-2 rounded-md text-sm font-medium">Submit Ticket</button>
+  </form>
+
+  <div class="space-y-3">
+    <% tickets.forEach(t => { %>
+      <a href="/support/tickets/<%= t._id %>" class="card p-4 flex justify-between items-center block">
+        <div><p class="text-sm font-medium"><%= t.subject %></p><p class="text-xs text-textSecondary"><%= t.category %></p></div>
+        <span class="badge-discount"><%= t.status %></span>
+      </a>
+    <% }) %>
+    <% if (tickets.length === 0) { %><div class="card p-10 text-center text-textSecondary">No tickets yet.</div><% } %>
+  </div>
+</section>
+<%- include('partials/footer') %>

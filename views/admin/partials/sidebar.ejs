@@ -1,0 +1,31 @@
+<aside class="w-56 bg-navy2 border-r border-border2 min-h-screen p-4 hidden md:block">
+  <h2 class="gradient-text font-bold heading text-lg mb-1">Admin Panel</h2>
+  <p class="text-textSecondary text-xs mb-6 capitalize"><%= adminRole.replace('_', ' ') %></p>
+
+  <nav class="space-y-1 text-sm">
+    <a href="/admin/dashboard" class="block px-3 py-2 rounded-md hover:bg-card">Dashboard</a>
+
+    <% if (can('users.manage')) { %><a href="/admin/users" class="block px-3 py-2 rounded-md hover:bg-card">Users</a><% } %>
+    <% if (can('sellers.manage')) { %><a href="/admin/sellers" class="block px-3 py-2 rounded-md hover:bg-card">Sellers</a><% } %>
+    <% if (can('products.manage')) { %>
+      <a href="/admin/products" class="block px-3 py-2 rounded-md hover:bg-card">Products</a>
+      <a href="/admin/brands" class="block px-3 py-2 rounded-md hover:bg-card">Brands</a>
+    <% } %>
+    <% if (can('categories.manage')) { %><a href="/admin/categories" class="block px-3 py-2 rounded-md hover:bg-card">Categories</a><% } %>
+    <% if (can('orders.view')) { %><a href="/admin/orders" class="block px-3 py-2 rounded-md hover:bg-card">Orders</a><% } %>
+    <% if (can('coupons.manage')) { %><a href="/admin/coupons" class="block px-3 py-2 rounded-md hover:bg-card">Coupons</a><% } %>
+    <% if (can('offers.manage')) { %>
+      <a href="/admin/flash-sales" class="block px-3 py-2 rounded-md hover:bg-card">Flash Sales</a>
+      <a href="/admin/bank-offers" class="block px-3 py-2 rounded-md hover:bg-card">Bank Offers</a>
+    <% } %>
+    <% if (can('support.manage')) { %><a href="/admin/support" class="block px-3 py-2 rounded-md hover:bg-card">Support Tickets</a><% } %>
+    <% if (can('notifications.send')) { %><a href="/admin/notifications-broadcast" class="block px-3 py-2 rounded-md hover:bg-card">Send Notification</a><% } %>
+    <% if (can('analytics.view')) { %><a href="/admin/analytics" class="block px-3 py-2 rounded-md hover:bg-card">Analytics</a><% } %>
+    <% if (can('reports.view')) { %><a href="/admin/reports" class="block px-3 py-2 rounded-md hover:bg-card">Reports</a><% } %>
+    <% if (can('auditlogs.view')) { %><a href="/admin/audit-logs" class="block px-3 py-2 rounded-md hover:bg-card">Audit Logs</a><% } %>
+
+    <hr class="border-border2 my-3">
+    <a href="/" class="block px-3 py-2 rounded-md hover:bg-card text-textSecondary">← Back to Store</a>
+    <a href="/logout" class="block px-3 py-2 rounded-md hover:bg-card text-error">Logout</a>
+  </nav>
+</aside>

@@ -1,0 +1,15 @@
+<%- include('partials/header') %>
+<section class="max-w-2xl mx-auto px-4 py-16 text-center">
+  <div class="card p-10">
+    <h1 class="text-2xl font-bold heading gradient-text mb-3">Order Placed Successfully!</h1>
+    <p class="text-textSecondary mb-1">Order ID: <%= order.orderNumber %></p>
+    <p class="text-textSecondary mb-1">Total: ₹<%= order.totalAmount %></p>
+    <p class="text-textSecondary mb-6">Payment: <%= order.paymentMethod %> (<%= order.paymentStatus %>)</p>
+    <div class="flex justify-center gap-4 flex-wrap">
+      <a href="/orders/<%= order._id %>" class="gradient-btn px-6 py-3 rounded-md font-semibold">Track Order</a>
+      <a href="/orders" class="border border-border2 px-6 py-3 rounded-md font-semibold hover:border-violet">View Orders</a>
+      <a href="/products" class="border border-border2 px-6 py-3 rounded-md font-semibold hover:border-violet">Continue Shopping</a>
+    </div>
+  </div>
+</section>
+<%- include('partials/footer') %>

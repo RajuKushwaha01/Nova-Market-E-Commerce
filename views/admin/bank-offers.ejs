@@ -1,0 +1,36 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6 max-w-3xl">
+    <h1 class="text-2xl font-bold heading mb-4">Bank Offers</h1>
+    <form action="/admin/bank-offers/create" method="POST" class="card p-5 grid md:grid-cols-2 gap-3 mb-6">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input name="bank" placeholder="Bank Name" required class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <select name="cardType" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+        <option value="Both">Credit + Debit</option><option value="Credit">Credit Only</option><option value="Debit">Debit Only</option>
+      </select>
+      <select name="discountType" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+        <option value="Percentage">Percentage</option><option value="Fixed">Fixed ₹</option>
+      </select>
+      <input type="number" name="discountValue" placeholder="Discount Value" required class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <input type="number" name="maxDiscount" placeholder="Max Discount" required class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <input type="number" name="minTransaction" placeholder="Min Transaction" class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <input type="date" name="startDate" required class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <input type="date" name="endDate" required class="bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <button class="gradient-btn px-5 py-2 rounded-md text-sm font-medium md:col-span-2">Add Bank Offer</button>
+    </form>
+
+    <div class="space-y-3">
+      <% offers.forEach(o => { %>
+        <div class="card p-4 flex justify-between items-center">
+          <div>
+            <p class="font-medium"><%= o.bank %> — <%= o.discountType === 'Percentage' ? o.discountValue + '%' : '₹' + o.discountValue %> off</p>
+            <p class="text-xs text-textSecondary">Max ₹<%= o.maxDiscount %> · Min transaction ₹<%= o.minTransaction %></p>
+          </div>
+          <form action="/admin/bank-offers/<%= o._id %>/toggle" method="POST"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="text-cyan text-xs"><%= o.isActive ? 'Disable' : 'Enable' %></button></form>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+</div>
+<%- include('../partials/footer') %>

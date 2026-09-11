@@ -1,0 +1,23 @@
+<%- include('../partials/header') %>
+<div class="flex">
+  <%- include('partials/sidebar') %>
+  <main class="flex-1 p-6 max-w-xl">
+    <h1 class="text-2xl font-bold heading mb-4">Send Platform Notification</h1>
+
+    <% if (result) { %><p class="text-success text-sm mb-4"><%= result %></p><% } %>
+
+    <form action="/admin/notifications-broadcast" method="POST" class="card p-5 space-y-3">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <select name="target" class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+        <option value="all">All Users</option>
+        <option value="customers">All Customers</option>
+        <option value="sellers">All Approved Sellers</option>
+      </select>
+      <input name="title" placeholder="Notification title" required class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <textarea name="message" placeholder="Message" required rows="3" class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm"></textarea>
+      <input name="link" placeholder="Link (optional, e.g. /products)" class="w-full bg-navy2 border border-border2 rounded-md px-3 py-2 text-sm">
+      <button class="gradient-btn px-5 py-2 rounded-md text-sm font-medium">Send Notification</button>
+    </form>
+  </main>
+</div>
+<%- include('../partials/footer') %>
